@@ -11,19 +11,56 @@ public class Player : MonoBehaviour
     private bool isWalking;
     public void Update()
     {
-        Vector2 inputVector = playerInput.GetMovementInput();
+        Vector2 inputVector = playerInput.GetMovementInputNormalized();
 
         Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
-        transform.position = transform.position + moveDir * moveSpeed * Time.deltaTime;
+        
 
-        // isWalking = moveDir != Vector3.zero; 
-        if(moveDir != Vector3.zero)
+
+        float maxDistance = moveSpeed * Time.deltaTime;
+        float playerHeight = 2f;
+        float playerRadius = .7f;
+        bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, maxDistance);
+
+        
+        if (!canMove)
+        {
+            // attempt movement on the X axis
+            Vector3 moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
+            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, maxDistance);
+            if (canMove)
+            {
+                moveDir = moveDirX;
+            }
+            else
+            {
+                // Attempt movement on the Z axis
+                Vector3 moveDirZ = new Vector3(0, 0, moveDir.y).normalized;
+                canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, maxDistance);
+                if (canMove)
+                {
+                    moveDir = moveDirZ;
+                }
+            }
+        }
+
+        
+        
+        
+        if (canMove)
+        {
+            transform.position = transform.position + moveDir * maxDistance;
+        }
+
+        Debug.Log(moveDir);
+         //isWalking = moveDir != Vector3.zero; 
+        if (moveDir != Vector3.zero)
         {
             isWalking = true;
         }
         else
         {
-            isWalking = false;
+           isWalking = false;
         } // is walking is set to true if the player is moving
 
         // Making the player rotate in the direction of movement

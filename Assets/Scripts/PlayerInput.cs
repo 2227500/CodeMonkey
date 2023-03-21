@@ -13,7 +13,7 @@ public class PlayerInput : MonoBehaviour
         playerInputActions.Player.Enable(); //enable the action map "Player"
     }
 
-    public Vector2 GetMovementInput()
+    public Vector2 GetMovementInputNormalized()
     {
         Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
 
