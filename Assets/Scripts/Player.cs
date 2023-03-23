@@ -11,10 +11,35 @@ public class Player : MonoBehaviour
     private bool isWalking;
     public void Update()
     {
+        HandleMovement();
+        HandleInteraction();
+;   }
+
+
+    public void HandleInteraction()
+    {
         Vector2 inputVector = playerInput.GetMovementInputNormalized();
 
         Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
-        
+
+        float interactDistance = 2f;
+
+        if (Physics.Raycast(transform.position, moveDir, out RaycastHit raycastHit, interactDistance))
+        {
+            Debug.Log(raycastHit.colliderInstanceID);
+        }
+        else
+        {
+            Debug.Log("-");
+        }
+    }
+
+    public void HandleMovement()
+    {
+        Vector2 inputVector = playerInput.GetMovementInputNormalized();
+
+        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
+
 
 
         float maxDistance = moveSpeed * Time.deltaTime;
@@ -22,7 +47,7 @@ public class Player : MonoBehaviour
         float playerRadius = .7f;
         bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, maxDistance);
 
-        
+
         if (!canMove)
         {
             // attempt movement on the X axis
@@ -44,30 +69,29 @@ public class Player : MonoBehaviour
             }
         }
 
-        
-        
-        
+
+
+
         if (canMove)
         {
             transform.position = transform.position + moveDir * maxDistance;
         }
 
-        Debug.Log(moveDir);
-         //isWalking = moveDir != Vector3.zero; 
+        //Debug.Log(moveDir);
+        //isWalking = moveDir != Vector3.zero; 
         if (moveDir != Vector3.zero)
         {
             isWalking = true;
         }
         else
         {
-           isWalking = false;
+            isWalking = false;
         } // is walking is set to true if the player is moving
 
         // Making the player rotate in the direction of movement
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
- 
-;    }
+    }
 
     public bool IsWalking()
     {
