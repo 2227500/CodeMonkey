@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
 
         if (Physics.Raycast(transform.position, moveDir, out RaycastHit raycastHit, interactDistance))
         {
-            Debug.Log(raycastHit.colliderInstanceID);
+            Debug.Log(raycastHit.transform);
         }
         else
         {
